@@ -1,5 +1,23 @@
 [//]: # (current developments)
 
+## 2026-08-27   3.17.1:
+### Enhancements
+
+* EXE: Speed up the "Setting installation directory permissions..." step of Windows installers considerably. (#828 via #1335)
+
+### Bug fixes
+
+* EXE installers: only warn when attempting to install a Windows AMD64 installer on ARM64. (#1337)
+
+### Contributors
+
+* @marcoesters
+* @lrandersson
+* @dependabot[bot]
+* @pre-commit-ci[bot]
+
+
+
 ## 2026-08-21   3.17.0:
 ### Enhancements
 
