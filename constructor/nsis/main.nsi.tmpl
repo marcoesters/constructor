@@ -658,22 +658,39 @@ Function .onInit
     # on whether it's a 32-bit or 64-bit installer
     SetRegView {{ BITS }}
 {%- if win64 %}
-    # Make sure we're not on 32-bit or native ARM64 Windows (the latter would
-    # otherwise silently run this x64 installer under x64 emulation).
-    ${IfNot} ${IsNativeAMD64}
+    ${If} ${IsNativeARM64}
+        # Warn if not running on AMD64, but do not abort since ARM64 can still run
+        # AMD64 programs with emulation.
+        ${Print} "This installer is for the 64-bit AMD (x86_64) version of ${NAME} \
+                  but your system is ARM64. It is recommended to use an installer \
+                  that matches your system's architecture."
+        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+            "This installer is for the 64-bit AMD (x86_64) version of ${NAME} \
+            but your system is ARM64. It is recommended to use an installer \
+            that matches your system's architecture." \
+            /SD IDOK IDOK +2
+            Abort
+    ${ElseIfNot} ${RunningX64}
+        # If we're a 64-bit installer, make sure it's 64-bit Windows
+        ${Print} "::error:: This installer is for a 64-bit version for ${NAME} \
+                  but your system is 32-bit. Please use the 32-bit Windows \
+                  ${NAME} installer."
         MessageBox MB_OK|MB_ICONEXCLAMATION \
-            "This installer is for the 64-bit (x86_64) version of ${NAME}$\n\
-            but your system is not x86_64. Please use the installer that$\n\
-            matches your system's architecture." \
+            "This installer is for a 64-bit version for ${NAME} \
+            but your system is 32-bit. Please use the 32-bit Windows \
+            ${NAME} installer." \
             /SD IDOK
         Abort
     ${EndIf}
 {%- elif win_arm64 %}
     # Make sure we're actually on native ARM64 Windows.
     ${IfNot} ${IsNativeARM64}
+        ${Print} "::error::This installer is for the ARM64 version of ${NAME} \
+                  but your system is not ARM64. Please use the installer that \
+                  matches your system's architecture."
         MessageBox MB_OK|MB_ICONEXCLAMATION \
-            "This installer is for the ARM64 version of ${NAME}$\n\
-            but your system is not ARM64. Please use the installer that$\n\
+            "This installer is for the ARM64 version of ${NAME} \
+            but your system is not ARM64. Please use the installer that \
             matches your system's architecture." \
             /SD IDOK
         Abort
